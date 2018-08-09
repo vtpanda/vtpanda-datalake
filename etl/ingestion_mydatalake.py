@@ -67,95 +67,111 @@ logger.info('Target S3 Bucket: '+targetBucket)
 
 def extract_hmda():
 # measure process time
-    start_time = timeit.default_timer()
+    try:
 
-    for varYear in hmdaYearlist:
-        msg = 'Downloading HMDA data for '+ varYear
+        start_time = timeit.default_timer()
+
+        for varYear in hmdaYearlist:
+            msg = 'Downloading HMDA data for '+ varYear
+            print(msg)
+            logger.info(msg)
+            url = urlBase+varYear+urlEnd
+
+            pathEnd = varYear+'/'
+            path = pathBase+pathFeed+pathPartition+pathEnd
+            fileName = path+destFile
+
+            uploadfilename = pathFeed+pathPartition+pathEnd+destFile
+
+            make_sure_path_exists(path)
+            msg = 'Making directory '+path
+            print(msg)
+            logger.info(msg)
+            try:
+                #get the HMDA data for the varYear variable
+                req = requests.get(url, stream=True)
+                file = open(fileName, 'wb')
+
+                msg = 'Downloading data '+fileName
+                print(msg)
+                logger.info(msg)
+
+                if req.status_code == 200:
+                    for chunk in req.iter_content(100000):
+                        if not chunk:
+                            break
+                        file.write(chunk)
+            except:
+                msg = 'Error when downloding file '+fileName
+                print(msg)
+                logger.exception(msg)
+                raise
+            else:
+                file.close()
+
+            fileCount = file_len(fileName)
+            msg = 'Completed download of file ' + fileName + ' with '+  str(fileCount) + ' records '
+            print(msg)
+            logger.info(msg)
+
+            msg = 'Synch to S3 bucket'
+            print(msg)
+            logger.info(msg)
+
+
+            ###NEED TO PUT TRY CATCH AROUND THIS; can we hit up SNS to trap this error?
+            #upload file to s3
+            msg = 'Upload ' + str(uploadfilename) + ' to S3'
+            print(msg)
+            logger.info(msg)
+
+            try:
+                s3 = boto3.resource('s3')
+                GB = 1024 ** 3
+                config = TransferConfig(multipart_threshold=5 * GB)
+                s3.meta.client.upload_file(fileName, targetBucket, uploadfilename, Config=config)
+
+                msg = 'Upload file finished'
+                print(msg)
+                logger.info(msg)
+            except:
+                msg = 'Error when uploading file'
+                print(msg)
+                logger.exception(msg)
+                raise
+
+        # of the of year partition loop
+        # actually, we probably don't need this because the ec2 instance is epemeral
+        # i'm commenting this out
+        msg = 'Deleting EC2 staging data'
         print(msg)
         logger.info(msg)
-        url = urlBase+varYear+urlEnd
+        delReturn_code = subprocess.call("rm -r "+pathBase, shell=True)
+        if delReturn_code == 0:
+            msg = 'Delete of EC2 files successful'
+            print(msg)
+            logger.info(msg)
+        else:
+            msg = 'Delete of EC2 files failed'
+            print(msg)
+            logger.info(msg)
 
-        pathEnd = varYear+'/'
-        path = pathBase+pathFeed+pathPartition+pathEnd
-        fileName = path+destFile
 
-        uploadfilename = pathFeed+pathPartition+pathEnd+destFile
 
-        make_sure_path_exists(path)
-        msg = 'Making directory '+path
+    except:
+        msg = 'Upload process failed'
         print(msg)
-        logger.info(msg)
-
-        #get the HMDA data for the varYear variable
-        req = requests.get(url, stream=True)
-        file = open(fileName, 'wb')
-
-        msg = 'Downloading data '+fileName
-        print(msg)
-        logger.info(msg)
-
-        if req.ok:
-            for chunk in req.iter_content(100000):
-                if not chunk:
-                    break
-                file.write(chunk)
-
-        file.close()
-
-        fileCount = file_len(fileName)
-        msg = 'Completed download of file ' + fileName + ' with '+  str(fileCount) + ' records '
-        print(msg)
-        logger.info(msg)
-
-        msg = 'Synch to S3 bucket'
-        print(msg)
-        logger.info(msg)
-
-
-        ###NEED TO PUT TRY CATCH AROUND THIS; can we hit up SNS to trap this error?
-        #upload file to s3
-        msg = 'Upload ' + str(uploadfilename) + ' to S3'
-        print(msg)
-        logger.info(msg)
-
-
-        s3 = boto3.resource('s3')
-        GB = 1024 ** 3
-        config = TransferConfig(multipart_threshold=5 * GB)
-        s3.meta.client.upload_file(fileName, targetBucket, uploadfilename, Config=config)
-
-        msg = 'Upload process finished'
-        print(msg)
-        logger.info(msg)
-
-        # msg = 'S3 synch failed - stop here'
-        # print(msg)
-        # logger.info(msg)
-    # of the of year partition loop
-    msg = 'Deleting EC2 staging data'
-    print(msg)
-    logger.info(msg)
-    delReturn_code = subprocess.call("rm -r "+pathBase, shell=True)
-    if delReturn_code == 0:
-        msg = 'Delete of EC2 files successful'
-        print(msg)
-        logger.info(msg)
+        logger.exception(msg)
+        raise
     else:
-        msg = 'Delete of EC2 files failed'
+        #end clock, calc time and print
+        elapsed = timeit.default_timer() - start_time
+        msg = 'Upload process successful: ' + str(elapsed) + ' seconds processed - elapsed time'
         print(msg)
         logger.info(msg)
-
-
-
-
-    #end clock, calc time and print
-    elapsed = timeit.default_timer() - start_time
-    msg = str(elapsed) + ' seconds processed - elapsed time'
-    print(msg)
-    logger.info(msg)
 
 if __name__ == "__main__":
     try:
         extract_hmda()
-    except Exception as e:
-        logging.exception("message")
+    except:
+        raise
