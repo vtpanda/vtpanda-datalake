@@ -22,7 +22,7 @@ from boto3.s3.transfer import TransferConfig
 
 #define/set variables
 urlBase = 'https://api.consumerfinance.gov:443/data/hmda/slice/hmda_lar.csv?$where=as_of_year+%3D+'
-urlEnd = '&$limit=100'
+urlEnd = '&$limit=0'
 
 hmdaYearlist = ['2009' ]
 pathBase = '/home/ec2-user/matt/data/'
