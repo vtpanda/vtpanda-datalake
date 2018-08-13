@@ -1,0 +1,24 @@
+#next steps:
+#parameterize this
+#create the role to be used
+#see if we can upload the file to S3
+Description: Creates a Glue Job to export the
+Resources:
+  ExportConverterGlueJob:
+    Type: "AWS::Glue::Job"
+    Properties:
+      Name: "FDICExport_net_charge_offs_1_4_family_residential_ToOrc"
+      Role:
+        Fn::Sub: "Glue_S3_vtpanda-data-lake_List_Read_Write"
+      MaxRetries: 1
+      Description: converts an arbitrary Glue CSV table into Orc
+      Command:
+        # DO NOT CHANGE NAME. CloudFormation docs are wrong. Use Glue API docs:
+        # http://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-JobCommand
+        Name: "glueetl"
+        ScriptLocation: "s3://vtpanda-glue/scripts/fdic_convert_net_charge_offs_1_4_family_residential_to_orc_glue.py"
+      AllocatedCapacity: 10
+      ExecutionProperty:
+        MaxConcurrentRuns: 1
+      DefaultArguments:
+        "--TempDir": "s3://vtpanda-glue/logging"
