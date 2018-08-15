@@ -1286,7 +1286,7 @@ HC04_MOE_VC44,
 '',
 '2013' as as_of_year
 from
-census_employment_status_2013;
+census_employment_status_raw_2013;
 
 insert into census_employment_status partition (as_of_year)
 select
@@ -1607,7 +1607,7 @@ HC04_MOE_VC44,
 '',
 '2014' as as_of_year
 from
-census_employment_status_2014;
+census_employment_status_raw_2014;
 
 insert into census_employment_status partition (as_of_year)
 select
@@ -1928,7 +1928,7 @@ HC04_EST_VC37,
 HC04_MOE_VC37,
 '2015' as as_of_year
 from
-census_employment_status_2015;
+census_employment_status_raw_2015;
 
 insert into census_employment_status partition (as_of_year)
 select
@@ -2249,6 +2249,6 @@ HC04_EST_VC37,
 HC04_MOE_VC37,
 '2016' as as_of_year
 from
-census_employment_status_2016;
+census_employment_status_raw_2016;
 
 msck repair table census_employment_status;
