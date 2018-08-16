@@ -18,27 +18,58 @@ import watchtower
 import logging
 import datetime
 import boto3
+import json
 from boto3.s3.transfer import TransferConfig
-
-#define/set variables
-urlBase = 'https://api.consumerfinance.gov:443/data/hmda/slice/hmda_lar.csv?$where=as_of_year+%3D+'
-urlEnd = '&$limit=100'
-
-hmdaYearlist = ['2009' ]
-pathBase = '/home/ec2-user/matt/data/'
-pathFeed = 'feeds/hmda/hmda_lar/raw/csv/'
-pathPartition = 'as_of_year='
-destFile = 'hmda_lar.csv'
-targetBucket = 'vtpanda-data-lake'
-logGroup = '/datalake-poc-matt/hmda/raw/ingestion'
 
 today = datetime.datetime.now()
 
+#define/set variables
+urlBase = 'https://api.consumerfinance.gov:443/data/hmda/slice/hmda_lar.csv?$where=as_of_year+%3D+' #TO Do: change path to whatever
+
+
+pathBase = '/home/ec2-user/matt/data/' #TO Do: don't need to change
+pathFeed = 'feeds/hmda/hmda_lar/raw/csv/' #TO Do: change hmda/hmda_lar to proper feed path
+pathPartition = 'as_of_year=' #TO Do: change REST API filter to whatever it should be
+destFile = 'hmda_lar.csv' #TO Do: change to proper file name
+
+#these are not needed any more
+# hmdaYearlist = ['2009' ]
+# targetBucket = 'vtpanda-data-lake'
+# logGroup = '/datalake-poc-matt/hmda/raw/ingestion'
+# urlEnd = '&$limit=100'
+
+
+if __name__ == "__main__":
+    #TO Do: put the initial list of parameters that we want to use here
+    commandargs = '{ "incremental": "true", "targetBucket": "vtpanda-data-lake", "limit": "100", "logGroup": "/datalake-poc-matt/hmda/raw/ingestion"}'
+
+    if len(sys.argv) > 1:
+        commandargs = sys.argv[1]
+    params = json.loads(commandargs)
+
+#TO Do: this is where we deal with incremental vs full load; need to decide what time periods are incremental vs full
+hmdaYearlist = [ today.year - 1 ]
+if params.get("incremental", "true") == "false":
+    hmdaYearlist = range(2009, today.year) #['2009' ]
+
+targetBucket = params.get("targetBucket", "none")
+logGroup = params.get("logGroup", "none")
+
+#TO Do: this is where we limit the number of records back
+limit = params.get("limit", "100")
+urlEnd = '&$limit=' + limit
+
+
+
 logging.basicConfig(level=logging.INFO)
+#TO Do: change the logger group to be specifically what we want for the feed we're loading
 logger = logging.getLogger('HMDA_load_process-'+str((today-datetime.datetime(1970,1,1)).total_seconds()))
 
-#we can add a boto3 session to this?
 logger.addHandler(watchtower.CloudWatchLogHandler(log_group=logGroup))
+
+msg = 'Parameters: '+ commandargs
+print(msg)
+logger.info(msg)
 
 #define functions
 
@@ -65,13 +96,15 @@ logger.info('Landing path: '+pathBase+pathFeed+pathPartition)
 logger.info('Destination file: '+destFile)
 logger.info('Target S3 Bucket: '+targetBucket)
 
+#TO Do: change name of function to be feed-specific
 def extract_hmda():
 # measure process time
     try:
 
         start_time = timeit.default_timer()
 
-        for varYear in hmdaYearlist:
+        for varYearInt in hmdaYearlist:
+            varYear = str(varYearInt)
             msg = 'Downloading HMDA data for '+ varYear
             print(msg)
             logger.info(msg)
@@ -119,7 +152,6 @@ def extract_hmda():
             logger.info(msg)
 
 
-            ###NEED TO PUT TRY CATCH AROUND THIS; can we hit up SNS to trap this error?
             #upload file to s3
             msg = 'Upload ' + str(uploadfilename) + ' to S3'
             print(msg)
@@ -172,6 +204,7 @@ def extract_hmda():
 
 if __name__ == "__main__":
     try:
+        #TO Do: change name of function to be feed-specific
         extract_hmda()
     except:
         raise
