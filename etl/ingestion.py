@@ -27,21 +27,21 @@ today = datetime.datetime.now()
 urlBase = 'https://api.consumerfinance.gov:443/data/hmda/slice/hmda_lar.csv?$where=as_of_year+%3D+' #TO Do: change path to whatever
 
 
-pathBase = '/home/ec2-user/matt/data/' #TO Do: don't need to change
+pathBase = '/home/ec2-user/ingestion/data/' #TO Do: don't need to change this
 pathFeed = 'feeds/hmda/hmda_lar/raw/csv/' #TO Do: change hmda/hmda_lar to proper feed path
 pathPartition = 'as_of_year=' #TO Do: change REST API filter to whatever it should be
 destFile = 'hmda_lar.csv' #TO Do: change to proper file name
 
 #these are not needed any more
 # hmdaYearlist = ['2009' ]
-# targetBucket = 'vtpanda-data-lake'
-# logGroup = '/datalake-poc-matt/hmda/raw/ingestion'
+# targetBucket = 'bucket-name'
+# logGroup = '/datalake-poc-blah-bah/hmda/raw/ingestion'
 # urlEnd = '&$limit=100'
 
 
 if __name__ == "__main__":
     #TO Do: put the initial list of parameters that we want to use here
-    commandargs = '{ "incremental": "true", "targetBucket": "vtpanda-data-lake", "limit": "100", "logGroup": "/datalake-poc-matt/hmda/raw/ingestion"}'
+    commandargs = '{ "incremental": "true", "targetBucket": "datalake-ingestion", "limit": "100", "logGroup": "/datalake-poc-ingestion/feeds/feed/ingestion"}'
 
     if len(sys.argv) > 1:
         commandargs = sys.argv[1]

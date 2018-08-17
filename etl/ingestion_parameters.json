@@ -2,5 +2,5 @@
 "incremental": "true",
 "targetBucket": "vtpanda-data-lake",
 "limit": "100",
-"logGroup": "/datalake-poc-matt/hmda/raw/ingestion"
+"logGroup": "/datalake-poc-matt/feeds/hmda/hmda_lar/ingestion"
 }
