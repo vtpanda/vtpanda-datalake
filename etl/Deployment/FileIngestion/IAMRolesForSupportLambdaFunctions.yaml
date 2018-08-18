@@ -1,0 +1,51 @@
+Description: Creating permmissions for the support Lambda functions
+Resources:
+  LambdaCloudWatchLogsAndDataPipeline:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: LambdaCloudWatchLogsAndDataPipeline
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSDataPipeline_FullAccess
+      - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "lambda.amazonaws.com"
+            Action:
+            - "sts:AssumeRole"
+  LambdaCloudWatchLogs:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: LambdaCloudWatchLogs
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "lambda.amazonaws.com"
+            Action:
+            - "sts:AssumeRole"
+
+Outputs:
+  LambdaCloudWatchLogsAndDataPipeline:
+    Description: IAM Role for Lambda Function that needs access to CloudWatch Logs and Data Pipeline
+    Export:
+      Name: LambdaCloudWatchLogsAndDataPipeline
+    Value:
+      Fn::GetAtt:
+      - LambdaCloudWatchLogsAndDataPipeline
+      - Arn
+  LambdaCloudWatchLogs:
+    Description: IAM Role for Lambda Function that needs access to CloudWatch Logs
+    Export:
+      Name: LambdaCloudWatchLogs
+    Value:
+      Fn::GetAtt:
+      - LambdaCloudWatchLogs
+      - Arn

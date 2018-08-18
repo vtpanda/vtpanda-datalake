@@ -1,0 +1,102 @@
+Description: Common support functions for AWS development
+
+Resources:
+  ActivateDataPipeline:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Activate a Data Pipeline
+      FunctionName: ActivateDataPipeline
+      Handler: "index.lambda_handler"
+      Runtime: python3.6
+      Timeout: "10"
+      Role:
+        Fn::ImportValue: LambdaCloudWatchLogsAndDataPipeline
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
+          import json
+          #the pipeline id ("df_abcdef123") should be passed in to this function under the "pipeline_id" parameter
+          #alternatively, if this is called from an SNS topic, the message should contain JSON with the above parameters within the JSON
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+          client = boto3.client('datapipeline')
+
+          def lambda_handler(event, context):
+              # TODO implement
+              logger.info("Start Call Data Pipeline")
+              pipeline_id = event.get("pipeline_id", 'not provided')
+
+              if pipeline_id == 'not provided':
+                  records = event.get("Records")
+                  record = records[0]
+                  sns = record.get("Sns")
+                  message = sns.get("Message")
+                  inputparams = json.loads(message)
+                  pipeline_id = inputparams.get("pipeline_id", 'not provided')
+
+              logger.info("activated Data Pipeline: " + pipeline_id)
+              try:
+                  response = client.activate_pipeline(pipelineId=pipeline_id)
+              except Exception as e:
+                  logger.error("Couldn't kick off pipeline " + pipeline_id )
+                  raise e
+              logger.info("Pipeline activated")
+              logger.info("End Call Data Pipeline")
+  CloudWatchLog:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Log a message to CloudWatch
+      FunctionName: CloudWatchLog
+      Handler: "index.lambda_handler"
+      Runtime: python3.6
+      Timeout: "10"
+      Role:
+        Fn::ImportValue: LambdaCloudWatchLogs
+      Code:
+        ZipFile: |
+          import logging
+          import json
+
+          #the message to log into CloudWatch should be passed into using the "message" parameter and the priority ("info" or "error") should be passed in using the "priority" parameter
+          #alternatively, if this is called from an SNS topic, the message should contain JSON with the above parameters within the JSON
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+
+          def lambda_handler(event, context):
+              # TODO implement
+
+              log = event.get("message", 'not provided')
+              priority = event.get("priority", 'info')
+
+              if log == 'not provided':
+                  records = event.get("Records")
+                  record = records[0]
+                  sns = record.get("Sns")
+                  message = sns.get("Message")
+                  inputparams = json.loads(message)
+
+                  log = inputparams.get("message", 'not provided')
+                  priority = inputparams.get("priority", 'info')
+
+              if priority == "error":
+                  logger.error (log)
+              else:
+                  logger.info(log)
+
+              return "this worked; message = " + log + "; priority = " + priority
+Outputs:
+  ActivateDataPipeline:
+    Description: Activate a Data Pipeline
+    Export:
+      Name: ActivateDataPipeline
+    Value:
+      Ref: ActivateDataPipeline
+  CloudWatchLog:
+    Description: Log a message to CloudWatch
+    Export:
+      Name: CloudWatchLog
+    Value:
+      Ref: CloudWatchLog
