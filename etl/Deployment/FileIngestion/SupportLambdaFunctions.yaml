@@ -87,6 +87,59 @@ Resources:
                   logger.info(log)
 
               return "this worked; message = " + log + "; priority = " + priority
+
+  ActivateDataPipelineInvokePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+    - ActivateDataPipeline
+    - ActivateDataPipelineTopic
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com
+      SourceArn:
+        Ref: ActivateDataPipelineTopic
+      FunctionName:
+        Fn::GetAtt:
+        - ActivateDataPipeline
+        - Arn
+  ActivateDataPipelineTopic:
+    Type: AWS::SNS::Topic
+    DependsOn:
+    - ActivateDataPipeline
+    Properties:
+      TopicName: ActivateDataPipelineTopic
+      Subscription:
+      - Protocol: "lambda"
+        Endpoint:
+          Fn::GetAtt:
+          - ActivateDataPipeline
+          - Arn
+  CloudWatchLogInvokePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+    - CloudWatchLog
+    - CloudWatchLogTopic
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com
+      SourceArn:
+        Ref: CloudWatchLogTopic
+      FunctionName:
+        Fn::GetAtt:
+        - CloudWatchLog
+        - Arn
+  CloudWatchLogTopic:
+    Type: AWS::SNS::Topic
+    DependsOn:
+    - CloudWatchLog
+    Properties:
+      TopicName: CloudWatchLogTopic
+      Subscription:
+      - Protocol: "lambda"
+        Endpoint:
+          Fn::GetAtt:
+          - CloudWatchLog
+          - Arn
 Outputs:
   ActivateDataPipeline:
     Description: Activate a Data Pipeline
