@@ -1,0 +1,7 @@
+Description: Common support SNS Topics for AWS development
+
+Resources:
+  CloudWatchLogTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ETLAdminEmailSubscriptionTopic
