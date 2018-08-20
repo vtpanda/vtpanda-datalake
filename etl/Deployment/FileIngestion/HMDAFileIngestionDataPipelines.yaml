@@ -1,0 +1,252 @@
+Description: Common support SNS Topics for AWS development
+Parameters:
+  ScriptFolder:
+    Description: Folder that contains the python and sql scripts referenced by this data pipeline.
+    Type: String
+  FeedName:
+    Description: Name of the feed to upload
+    Type: String
+  LogFolder:
+    Description: S3 Location for the Data Pipeline to log to
+    Type: String
+  AMIImageId:
+    Description: EC2 Image to use
+    Type: String
+  EC2InstanceType:
+    Description: EC2 Instance Type
+    Type: String
+  EC2KeyPair:
+    Description: KeyPair to use to access the EC2 instance
+    Type: String
+Resources:
+  FileIngestionUploadToS3:
+    Type: "AWS::DataPipeline::Pipeline"
+    Properties:
+      Name:
+        Fn::Sub:
+        - "FileIngestionUploadToS3_${Name}"
+        - Name:
+            Ref: FeedName
+      Description:
+        Fn::Sub:
+        - "Pipeline to download the ${Name} feed and upload it to S3"
+        - Name:
+            Ref: FeedName
+      Activate: false
+      ParameterObjects:
+      - Id: "DataPipeLineLogFolder"
+        Attributes:
+        - Key: "description"
+          StringValue: "S3 folder that the Data Pipeline logs to"
+        - Key: "type"
+          StringValue: "String"
+        - Key: "default"
+          StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+      - Id: "InputScriptsFolder"
+        Attributes:
+        - Key: "description"
+          StringValue: "S3 folder that the Data Pipeline logs to"
+        - Key: "type"
+          StringValue: "String"
+        - Key: "default"
+          StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+      - Id: "AMIImageId"
+        Attributes:
+        - Key: "description"
+          StringValue: "EC2 Image to use"
+        - Key: "type"
+          StringValue: "String"
+        - Key: "default"
+          StringValue: "ami-67cf2a19"
+      - Id: "EC2InstanceType"
+        Attributes:
+        - Key: "description"
+          StringValue: "EC2 Type"
+        - Key: "type"
+          StringValue: "String"
+        - Key: "default"
+          StringValue: "t2.micro"
+      - Id: "EC2KeyPair"
+        Attributes:
+        - Key: "description"
+          StringValue: "KeyPair to use to be able to access the EC2 instance"
+        - Key: "type"
+          StringValue: "String"
+        - Key: "default"
+          StringValue: "EC2First"
+      ParameterValues:
+      - Id: "DataPipeLineLogFolder"
+        StringValue:
+          Ref: LogFolder
+      - Id: "InputScriptsFolder"
+        StringValue:
+          Ref: ScriptFolder
+      - Id: "AMIImageId"
+        StringValue:
+          Ref: AMIImageId
+      - Id: "EC2InstanceType"
+        StringValue:
+          Ref: EC2InstanceType
+      - Id: "EC2KeyPair"
+        StringValue:
+          Ref: EC2KeyPair
+      PipelineObjects:
+      - Id: "Default"
+        Name: "Default"
+        Fields:
+        - Key: "type"
+          StringValue: "Default"
+        - Key: "scheduleType"
+          StringValue: "ONDEMAND"
+        - Key: "failureAndRerunMode"
+          StringValue: "CASCADE"
+        - Key: "role"
+          StringValue:
+            Fn::ImportValue: #ToDo: need to add role here
+        - Key: "resourceRole"
+          StringValue:
+            Fn::ImportValue: #ToDo: Need to add role here
+        - Key: "pipelineLogUri"
+          StringValue:
+            Ref: LogFolder
+      - Id: "InputScriptsFolder"
+        Name: "InputScriptsFolder"
+        Fields:
+        - Key: "type"
+          StringValue: "S3DataNode"
+        - Key: "directoryPath"
+          StringValue:
+            Ref: InputScriptsFolder
+      - Id: MyEc2Resource
+        Name: "MyEc2Resource"
+        Fields:
+        - Key: "type"
+          StringValue: "Ec2Resource"
+        - Key: "imageId"
+          StringValue:
+            Ref: AMIImageId
+        - Key: "instanceType"
+          StringValue:
+            Ref: EC2InstanceType
+        - Key: "keyPair"
+          StringValue:
+            Ref: EC2KeyPair
+        - Key: "terminateAfter"
+          StringValue: "4 HOURS"
+      - Id: ShellActivity
+        Name: "ShellScript"
+        Fields:
+        - Key: "type"
+          StringValue: "ShellCommandActivity"
+        - Key: "input"
+          StringValue:
+              RefValue: InputScriptsFolder
+        - Key: "scriptUri"
+          StringValue:
+            Fn::Sub:
+            - "${Folder}/hmda_ingestion.sh"
+            - Folder:
+                Ref: InputScriptsFolder
+        - Key: "stage"
+          StringValue: "true"
+        - Key: "maximumRetries"
+          StringValue: "0"
+        - Key: "runsOn"
+          StringValue:
+              RefValue: MyEc2Resource
+        - Key: "onFail"
+          StringValue:
+              RefValue: FailureEmail
+        - Key: "onFail"
+          StringValue:
+              RefValue: FailureLogging
+        - Key: "onSuccess"
+          StringValue:
+              RefValue: KickOffPipeline
+        - Key: "onSuccess"
+          StringValue:
+              RefValue: SuccessEmail
+        - Key: "onSuccess"
+          StringValue:
+              RefValue: SuccessfulLogging
+      - Id: KickOffPipeline
+          Name: "KickOffPipeline"
+          Fields:
+          - Key: "type"
+            StringValue: "SnsAlarm"
+          - Key: "message"
+            StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }""
+          - Key: "role"
+            StringValue:
+              Fn::ImportValue: #To Do:
+          - Key: "subject"
+            StringValue: "Kick off Orc Conversion"
+          - Key: "topicArn"
+            StringValue:
+              Fn::ImportValue: #To Do:
+      - Id: SuccessEmail
+        - Key: "type"
+          StringValue: "SnsAlarm"
+        - Key: "message"
+          StringValue: "Data Upload Succeeded"
+        - Key: "role"
+          StringValue:
+            Fn::ImportValue: #To Do:
+        - Key: "subject"
+          StringValue: "Data Upload Succeeded"
+        - Key: "topicArn"
+          StringValue:
+            Fn::ImportValue: #To Do:
+      - Id: FailureEmail
+        - Key: "type"
+          StringValue: "SnsAlarm"
+        - Key: "message"
+          StringValue: "Data Ingestion Failed; Please check the logs"
+        - Key: "role"
+          StringValue:
+            Fn::ImportValue: #To Do:
+        - Key: "subject"
+          StringValue: "Data Ingestion Failed"
+        - Key: "topicArn"
+          StringValue:
+            Fn::ImportValue: #To Do:
+      - Id: SuccessfulLogging
+        - Key: "type"
+          StringValue: "SnsAlarm"
+        - Key: "message"
+          StringValue: "{ 'message': 'The HMDA upload ingestion process was successful.', 'priority': 'info' }"
+        - Key: "role"
+          StringValue:
+            Fn::ImportValue: #To Do:
+        - Key: "subject"
+          StringValue: "Data Upload Succeeded"
+        - Key: "topicArn"
+          StringValue:
+            Fn::ImportValue: #To Do:
+      - Id: FailureLogging
+        - Key: "type"
+          StringValue: "SnsAlarm"
+        - Key: "message"
+          StringValue: "{ 'message': 'The Data Upload Process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
+        - Key: "role"
+          StringValue:
+            Fn::ImportValue: #To Do:
+        - Key: "subject"
+          StringValue: "Failure in Data Download and Ingestion"
+        - Key: "topicArn"
+          StringValue:
+            Fn::ImportValue: #To Do:
+        # Name: FailureNotification
+        # Fields:
+        # - Key: "type"
+        #   StringValue: "SnsAlarm"
+        # - Key: "topicArn"
+        #   StringValue:
+        #     Ref: ExportFailureTopic
+        # - Key: "role"
+        #   StringValue:
+        #     Fn::ImportValue: DataPipelinesDynamoDBExportRole
+        # - Key: "subject"
+        #   StringValue: "#{myDDBTableName} Data Pipeline Failed"
+        # - Key: "message"
+        #   StringValue: "{\"type\":\"dynamodb\",\"resource_name\":\"#{myDDBTableName}\",\"location\":\"#{myOutputS3Loc}/#{format(node.@scheduledStartTime,'YYYY-MM-dd-HH-mm-ss')}\",\"message\":\"Failed to backup #{myDDBTableName} to #{myOutputS3Loc}/#{format(node.@scheduledStartTime,'YYYY-MM-dd')}\"}"
