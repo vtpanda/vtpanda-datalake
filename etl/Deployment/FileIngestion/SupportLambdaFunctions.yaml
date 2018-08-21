@@ -10,7 +10,7 @@ Resources:
       Runtime: python3.6
       Timeout: "10"
       Role:
-        Fn::ImportValue: LambdaCloudWatchLogsAndDataPipeline
+        Fn::ImportValue: LambdaCloudWatchLogsAndDataPipelineARN
       Code:
         ZipFile: |
           import boto3
@@ -52,7 +52,7 @@ Resources:
       Runtime: python3.6
       Timeout: "10"
       Role:
-        Fn::ImportValue: LambdaCloudWatchLogs
+        Fn::ImportValue: LambdaCloudWatchLogsARN
       Code:
         ZipFile: |
           import logging

@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "ScriptFolder",
+    "ParameterValue": "s3://vtpanda-data-pipeline/scripts"
+  },
+  {
+    "ParameterKey": "FeedName",
+    "ParameterValue": "hmda"
+  },
+  {
+    "ParameterKey": "LogFolder",
+    "ParameterValue": "s3://vtpanda-data-pipeline/logging/"
+  },
+  {
+    "ParameterKey": "AMIImageId",
+    "ParameterValue": "ami-67cf2a19"
+  },
+  {
+    "ParameterKey": "EC2InstanceType",
+    "ParameterValue": "t2.micro"
+  },
+  {
+    "ParameterKey": "EC2KeyPair",
+    "ParameterValue": "EC2First"
+  }
+]

@@ -24,215 +24,207 @@ Resources:
     Properties:
       Name:
         Fn::Sub:
-        - "FileIngestionUploadToS3_${Name}"
-        - Name:
+        - "FileIngestionUploadToS3_${FeedName}"
+        - FeedName:
             Ref: FeedName
       Description:
         Fn::Sub:
-        - "Pipeline to download the ${Name} feed and upload it to S3"
-        - Name:
+        - "Pipeline to download the ${FeedName} feed and upload it to S3"
+        - FeedName:
             Ref: FeedName
       Activate: false
       ParameterObjects:
-      - Id: "DataPipeLineLogFolder"
-        Attributes:
-        - Key: "description"
-          StringValue: "S3 folder that the Data Pipeline logs to"
-        - Key: "type"
-          StringValue: "String"
-        - Key: "default"
-          StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
-      - Id: "InputScriptsFolder"
-        Attributes:
-        - Key: "description"
-          StringValue: "S3 folder that the Data Pipeline logs to"
-        - Key: "type"
-          StringValue: "String"
-        - Key: "default"
-          StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
-      - Id: "AMIImageId"
-        Attributes:
-        - Key: "description"
-          StringValue: "EC2 Image to use"
-        - Key: "type"
-          StringValue: "String"
-        - Key: "default"
-          StringValue: "ami-67cf2a19"
-      - Id: "EC2InstanceType"
-        Attributes:
-        - Key: "description"
-          StringValue: "EC2 Type"
-        - Key: "type"
-          StringValue: "String"
-        - Key: "default"
-          StringValue: "t2.micro"
-      - Id: "EC2KeyPair"
-        Attributes:
-        - Key: "description"
-          StringValue: "KeyPair to use to be able to access the EC2 instance"
-        - Key: "type"
-          StringValue: "String"
-        - Key: "default"
-          StringValue: "EC2First"
+        - Id: "myDataPipeLineLogFolder"
+          Attributes:
+            - Key: "description"
+              StringValue: "S3 folder that the Data Pipeline logs to"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+        - Id: "myInputScriptsFolder"
+          Attributes:
+            - Key: "description"
+              StringValue: "S3 folder that the Data Pipeline logs to"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+        - Id: "myAMIImageId"
+          Attributes:
+            - Key: "description"
+              StringValue: "EC2 Image to use"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "ami-67cf2a19"
+        - Id: "myEC2InstanceType"
+          Attributes:
+            - Key: "description"
+              StringValue: "EC2 Type"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "t2.micro"
+        - Id: "myEC2KeyPair"
+          Attributes:
+            - Key: "description"
+              StringValue: "KeyPair to use to be able to access the EC2 instance"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "EC2First"
       ParameterValues:
-      - Id: "DataPipeLineLogFolder"
-        StringValue:
-          Ref: LogFolder
-      - Id: "InputScriptsFolder"
-        StringValue:
-          Ref: ScriptFolder
-      - Id: "AMIImageId"
-        StringValue:
-          Ref: AMIImageId
-      - Id: "EC2InstanceType"
-        StringValue:
-          Ref: EC2InstanceType
-      - Id: "EC2KeyPair"
-        StringValue:
-          Ref: EC2KeyPair
-      PipelineObjects:
-      - Id: "Default"
-        Name: "Default"
-        Fields:
-        - Key: "type"
-          StringValue: "Default"
-        - Key: "scheduleType"
-          StringValue: "ONDEMAND"
-        - Key: "failureAndRerunMode"
-          StringValue: "CASCADE"
-        - Key: "role"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloper
-        - Key: "resourceRole"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloperResource
-        - Key: "pipelineLogUri"
+        - Id: "myDataPipeLineLogFolder"
           StringValue:
             Ref: LogFolder
-      - Id: "InputScriptsFolder"
-        Name: "InputScriptsFolder"
-        Fields:
-        - Key: "type"
-          StringValue: "S3DataNode"
-        - Key: "directoryPath"
+        - Id: "myInputScriptsFolder"
           StringValue:
-            Ref: InputScriptsFolder
-      - Id: MyEc2Resource
-        Name: "MyEc2Resource"
-        Fields:
-        - Key: "type"
-          StringValue: "Ec2Resource"
-        - Key: "imageId"
+            Ref: ScriptFolder
+        - Id: "myAMIImageId"
           StringValue:
             Ref: AMIImageId
-        - Key: "instanceType"
+        - Id: "myEC2InstanceType"
           StringValue:
             Ref: EC2InstanceType
-        - Key: "keyPair"
+        - Id: "myEC2KeyPair"
           StringValue:
             Ref: EC2KeyPair
-        - Key: "terminateAfter"
-          StringValue: "4 HOURS"
-      - Id: ShellActivity
-        Name: "ShellScript"
-        Fields:
-        - Key: "type"
-          StringValue: "ShellCommandActivity"
-        - Key: "input"
-          StringValue:
-              RefValue: InputScriptsFolder
-        - Key: "scriptUri"
-          StringValue:
-            Fn::Sub:
-            - "${Folder}/hmda_ingestion.sh"
-            - Folder:
-                Ref: InputScriptsFolder
-        - Key: "stage"
-          StringValue: "true"
-        - Key: "maximumRetries"
-          StringValue: "0"
-        - Key: "runsOn"
-          StringValue:
-              RefValue: MyEc2Resource
-        - Key: "onFail"
-          StringValue:
+      PipelineObjects:
+        - Id: "Default"
+          Name: "Default"
+          Fields:
+            - Key: "type"
+              StringValue: "Default"
+            - Key: "scheduleType"
+              StringValue: "ONDEMAND"
+            - Key: "failureAndRerunMode"
+              StringValue: "CASCADE"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "resourceRole"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloperResource
+            - Key: "pipelineLogUri"
+              StringValue: "#{myDataPipeLineLogFolder}"
+        - Id: "InputScriptsFolderDataNode"
+          Name: "InputScriptsFolderDataNode"
+          Fields:
+            - Key: "type"
+              StringValue: "S3DataNode"
+            - Key: "directoryPath"
+              StringValue: "#{myInputScriptsFolder}"
+        - Id: Runner
+          Name: "Runner"
+          Fields:
+            - Key: "type"
+              StringValue: "Ec2Resource"
+            - Key: "imageId"
+              StringValue: "#{myAMIImageId}"
+            - Key: "instanceType"
+              StringValue: "#{myEC2InstanceType}"
+            - Key: "keyPair"
+              StringValue: "#{myEC2KeyPair}"
+            - Key: "terminateAfter"
+              StringValue: "4 HOURS"
+        - Id: ShellActivity
+          Name: "ShellScript"
+          Fields:
+            - Key: "type"
+              StringValue: "ShellCommandActivity"
+            - Key: "input"
+              RefValue: InputScriptsFolderDataNode
+            - Key: "scriptUri"
+              StringValue: "#{myInputScriptsFolder}/hmda_ingestion.sh"
+            - Key: "stage"
+              StringValue: "true"
+            - Key: "maximumRetries"
+              StringValue: "0"
+            - Key: "runsOn"
+              RefValue: Runner
+            - Key: "onFail"
               RefValue: FailureEmail
-        - Key: "onFail"
-          StringValue:
+            - Key: "onFail"
               RefValue: FailureLogging
-        - Key: "onSuccess"
-          StringValue:
+            - Key: "onSuccess"
               RefValue: KickOffPipeline
-        - Key: "onSuccess"
-          StringValue:
+            - Key: "onSuccess"
               RefValue: SuccessEmail
-        - Key: "onSuccess"
-          StringValue:
+            - Key: "onSuccess"
               RefValue: SuccessfulLogging
-      - Id: KickOffPipeline
+        - Id: KickOffPipeline
           Name: "KickOffPipeline"
           Fields:
-          - Key: "type"
-            StringValue: "SnsAlarm"
-          - Key: "message"
-            StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }"
-          - Key: "role"
-            StringValue:
-              Fn::ImportValue: DataPipelineDeveloper
-          - Key: "subject"
-            StringValue: "Kick off Orc Conversion"
-          - Key: "topicArn"
-            StringValue:
-              Fn::ImportValue: ActivateDataPipelineTopic
-      - Id: SuccessEmail
-        - Key: "type"
-          StringValue: "SnsAlarm"
-        - Key: "message"
-          StringValue: "Data Upload Succeeded"
-        - Key: "role"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloper
-        - Key: "subject"
-          StringValue: "Data Upload Succeeded"
-        - Key: "topicArn"
-          StringValue:
-            Fn::ImportValue: ETLAdminEmailSubscriptionTopic
-      - Id: FailureEmail
-        - Key: "type"
-          StringValue: "SnsAlarm"
-        - Key: "message"
-          StringValue: "Data Ingestion Failed; Please check the logs"
-        - Key: "role"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloper
-        - Key: "subject"
-          StringValue: "Data Ingestion Failed"
-        - Key: "topicArn"
-          StringValue:
-            Fn::ImportValue: ETLAdminEmailSubscriptionTopic
-      - Id: SuccessfulLogging
-        - Key: "type"
-          StringValue: "SnsAlarm"
-        - Key: "message"
-          StringValue: "{ 'message': 'The HMDA upload ingestion process was successful.', 'priority': 'info' }"
-        - Key: "role"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloper
-        - Key: "subject"
-          StringValue: "Data Upload Succeeded"
-        - Key: "topicArn"
-          StringValue:
-            Fn::ImportValue: CloudWatchLogTopic
-      - Id: FailureLogging
-        - Key: "type"
-          StringValue: "SnsAlarm"
-        - Key: "message"
-          StringValue: "{ 'message': 'The Data Upload Process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
-        - Key: "role"
-          StringValue:
-            Fn::ImportValue: DataPipelineDeveloper
-        - Key: "subject"
-          StringValue: "Failure in Data Download and Ingestion"
-        - Key: "topicArn"
-          StringValue:
-            Fn::ImportValue: CloudWatchLogTopic
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "Kick off Orc Conversion"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: ActivateDataPipelineTopic
+        - Id: SuccessEmail
+          Name: "SuccessEmail"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "Data Upload Succeeded"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "Data Upload Succeeded"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: ETLAdminEmailSubscriptionTopic
+        - Id: FailureEmail
+          Name: "FailureEmail"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "Data Ingestion Failed; Please check the logs"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "Data Ingestion Failed"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: ETLAdminEmailSubscriptionTopic
+        - Id: SuccessfulLogging
+          Name: "SuccessfulLogging"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "{ 'message': 'The HMDA upload ingestion process was successful.', 'priority': 'info' }"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "Data Upload Succeeded"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: CloudWatchLogTopic
+        - Id: FailureLogging
+          Name: "FailureLogging"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "{ 'message': 'The Data Upload Process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "Failure in Data Download and Ingestion"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: CloudWatchLogTopic

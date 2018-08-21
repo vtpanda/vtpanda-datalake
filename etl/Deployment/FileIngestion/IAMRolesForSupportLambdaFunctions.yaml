@@ -64,37 +64,66 @@ Resources:
               - "ec2.amazonaws.com"
             Action:
             - "sts:AssumeRole"
-
+  DataPipelineDeveloperResourceInstanceType:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: DataPipelineDeveloperResource
+      InstanceProfileName: "DataPipelineDeveloperResource"
 Outputs:
+  LambdaCloudWatchLogsAndDataPipelineARN:
+    Description: IAM Role for Lambda Function that needs access to CloudWatch Logs and Data Pipeline
+    Export:
+      Name: LambdaCloudWatchLogsAndDataPipelineARN
+    Value:
+      Fn::GetAtt:
+      - LambdaCloudWatchLogsAndDataPipeline
+      - Arn
+  LambdaCloudWatchLogsARN:
+    Description: IAM Role for Lambda Function that needs access to CloudWatch Logs
+    Export:
+      Name: LambdaCloudWatchLogsARN
+    Value:
+      Fn::GetAtt:
+      - LambdaCloudWatchLogs
+      - Arn
+  DataPipelineDeveloperARN:
+    Description: IAM Role for Data Pipeline Runner
+    Export:
+      Name: DataPipelineDeveloperARN
+    Value:
+      Fn::GetAtt:
+      - DataPipelineDeveloper
+      - Arn
+  DataPipelineDeveloperResourceARN:
+    Description: IAM Role for Data Pipeline Resource Runner
+    Export:
+      Name: DataPipelineDeveloperResourceARN
+    Value:
+      Fn::GetAtt:
+      - DataPipelineDeveloperResource
+      - Arn
   LambdaCloudWatchLogsAndDataPipeline:
     Description: IAM Role for Lambda Function that needs access to CloudWatch Logs and Data Pipeline
     Export:
       Name: LambdaCloudWatchLogsAndDataPipeline
     Value:
-      Fn::GetAtt:
-      - LambdaCloudWatchLogsAndDataPipeline
-      - Arn
+      Ref: LambdaCloudWatchLogsAndDataPipeline
   LambdaCloudWatchLogs:
     Description: IAM Role for Lambda Function that needs access to CloudWatch Logs
     Export:
       Name: LambdaCloudWatchLogs
     Value:
-      Fn::GetAtt:
-      - LambdaCloudWatchLogs
-      - Arn
+      Ref: LambdaCloudWatchLogs
   DataPipelineDeveloper:
     Description: IAM Role for Data Pipeline Runner
     Export:
       Name: DataPipelineDeveloper
     Value:
-      Fn::GetAtt:
-      - DataPipelineDeveloper
-      - Arn
+      Ref: DataPipelineDeveloper
   DataPipelineDeveloperResource:
     Description: IAM Role for Data Pipeline Resource Runner
     Export:
       Name: DataPipelineDeveloperResource
     Value:
-      Fn::GetAtt:
-      - DataPipelineDeveloperResource
-      - Arn
+      Ref: DataPipelineDeveloperResource
