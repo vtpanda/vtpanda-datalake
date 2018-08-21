@@ -1,7 +1,14 @@
 Description: Common support SNS Topics for AWS development
 
 Resources:
-  CloudWatchLogTopic:
+  ETLAdminEmailSubscriptionTopic:
     Type: AWS::SNS::Topic
     Properties:
       TopicName: ETLAdminEmailSubscriptionTopic
+Outputs:
+  ETLAdminEmailSubscriptionTopic:
+    Description: IAM Role for Lambda Function that needs access to CloudWatch Logs and Data Pipeline
+    Export:
+      Name: ETLAdminEmailSubscriptionTopic
+    Value:
+      Ref: ETLAdminEmailSubscriptionTopic

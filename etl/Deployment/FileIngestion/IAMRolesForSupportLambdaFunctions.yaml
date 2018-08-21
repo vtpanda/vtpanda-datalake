@@ -31,6 +31,39 @@ Resources:
               - "lambda.amazonaws.com"
             Action:
             - "sts:AssumeRole"
+  DataPipelineDeveloper:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: DataPipelineDeveloper
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSDataPipelineRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "elasticmapreduce.amazonaws.com"
+              - "datapipeline.amazonaws.com"
+            Action:
+            - "sts:AssumeRole"
+  DataPipelineDeveloperResource:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: DataPipelineDeveloperResource
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforDataPipelineRole
+      - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "ec2.amazonaws.com"
+            Action:
+            - "sts:AssumeRole"
 
 Outputs:
   LambdaCloudWatchLogsAndDataPipeline:
@@ -48,4 +81,20 @@ Outputs:
     Value:
       Fn::GetAtt:
       - LambdaCloudWatchLogs
+      - Arn
+  DataPipelineDeveloper:
+    Description: IAM Role for Data Pipeline Runner
+    Export:
+      Name: DataPipelineDeveloper
+    Value:
+      Fn::GetAtt:
+      - DataPipelineDeveloper
+      - Arn
+  DataPipelineDeveloperResource:
+    Description: IAM Role for Data Pipeline Resource Runner
+    Export:
+      Name: DataPipelineDeveloperResource
+    Value:
+      Fn::GetAtt:
+      - DataPipelineDeveloperResource
       - Arn

@@ -102,10 +102,10 @@ Resources:
           StringValue: "CASCADE"
         - Key: "role"
           StringValue:
-            Fn::ImportValue: #ToDo: need to add role here
+            Fn::ImportValue: DataPipelineDeveloper
         - Key: "resourceRole"
           StringValue:
-            Fn::ImportValue: #ToDo: Need to add role here
+            Fn::ImportValue: DataPipelineDeveloperResource
         - Key: "pipelineLogUri"
           StringValue:
             Ref: LogFolder
@@ -175,15 +175,15 @@ Resources:
           - Key: "type"
             StringValue: "SnsAlarm"
           - Key: "message"
-            StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }""
+            StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }"
           - Key: "role"
             StringValue:
-              Fn::ImportValue: #To Do:
+              Fn::ImportValue: DataPipelineDeveloper
           - Key: "subject"
             StringValue: "Kick off Orc Conversion"
           - Key: "topicArn"
             StringValue:
-              Fn::ImportValue: #To Do:
+              Fn::ImportValue: ActivateDataPipelineTopic
       - Id: SuccessEmail
         - Key: "type"
           StringValue: "SnsAlarm"
@@ -191,12 +191,12 @@ Resources:
           StringValue: "Data Upload Succeeded"
         - Key: "role"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: DataPipelineDeveloper
         - Key: "subject"
           StringValue: "Data Upload Succeeded"
         - Key: "topicArn"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: ETLAdminEmailSubscriptionTopic
       - Id: FailureEmail
         - Key: "type"
           StringValue: "SnsAlarm"
@@ -204,12 +204,12 @@ Resources:
           StringValue: "Data Ingestion Failed; Please check the logs"
         - Key: "role"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: DataPipelineDeveloper
         - Key: "subject"
           StringValue: "Data Ingestion Failed"
         - Key: "topicArn"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: ETLAdminEmailSubscriptionTopic
       - Id: SuccessfulLogging
         - Key: "type"
           StringValue: "SnsAlarm"
@@ -217,12 +217,12 @@ Resources:
           StringValue: "{ 'message': 'The HMDA upload ingestion process was successful.', 'priority': 'info' }"
         - Key: "role"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: DataPipelineDeveloper
         - Key: "subject"
           StringValue: "Data Upload Succeeded"
         - Key: "topicArn"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: CloudWatchLogTopic
       - Id: FailureLogging
         - Key: "type"
           StringValue: "SnsAlarm"
@@ -230,23 +230,9 @@ Resources:
           StringValue: "{ 'message': 'The Data Upload Process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
         - Key: "role"
           StringValue:
-            Fn::ImportValue: #To Do:
+            Fn::ImportValue: DataPipelineDeveloper
         - Key: "subject"
           StringValue: "Failure in Data Download and Ingestion"
         - Key: "topicArn"
           StringValue:
-            Fn::ImportValue: #To Do:
-        # Name: FailureNotification
-        # Fields:
-        # - Key: "type"
-        #   StringValue: "SnsAlarm"
-        # - Key: "topicArn"
-        #   StringValue:
-        #     Ref: ExportFailureTopic
-        # - Key: "role"
-        #   StringValue:
-        #     Fn::ImportValue: DataPipelinesDynamoDBExportRole
-        # - Key: "subject"
-        #   StringValue: "#{myDDBTableName} Data Pipeline Failed"
-        # - Key: "message"
-        #   StringValue: "{\"type\":\"dynamodb\",\"resource_name\":\"#{myDDBTableName}\",\"location\":\"#{myOutputS3Loc}/#{format(node.@scheduledStartTime,'YYYY-MM-dd-HH-mm-ss')}\",\"message\":\"Failed to backup #{myDDBTableName} to #{myOutputS3Loc}/#{format(node.@scheduledStartTime,'YYYY-MM-dd')}\"}"
+            Fn::ImportValue: CloudWatchLogTopic

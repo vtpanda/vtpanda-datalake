@@ -141,15 +141,15 @@ Resources:
           - CloudWatchLog
           - Arn
 Outputs:
-  ActivateDataPipeline:
-    Description: Activate a Data Pipeline
-    Export:
-      Name: ActivateDataPipeline
-    Value:
-      Ref: ActivateDataPipeline
-  CloudWatchLog:
+  CloudWatchLogTopic:
     Description: Log a message to CloudWatch
     Export:
-      Name: CloudWatchLog
+      Name: CloudWatchLogTopic
     Value:
-      Ref: CloudWatchLog
+      Ref: CloudWatchLogTopic
+  ActivateDataPipelineTopic:
+    Description: Activate a Data Pipeline
+    Export:
+      Name: ActivateDataPipelineTopic
+    Value:
+      Ref: ActivateDataPipelineTopic
