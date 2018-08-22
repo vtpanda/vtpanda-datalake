@@ -234,5 +234,5 @@ CREATE external table census_educational_attainment (
 PARTITIONED BY (
   as_of_year string)
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/educational_attainment/clean/orc'
+LOCATION 's3://datalake-poc-data/feeds/census/educational_attainment/curated/orc'
 tblproperties ("orc.compress"="ZLIB");
