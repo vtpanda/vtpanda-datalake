@@ -370,7 +370,7 @@ Resources:
             - Key: "message"
               StringValue:
                 Fn::Sub:
-                - "{ 'pipeline_id': '${ConversionPipeline}' }"
+                - "{ \"pipeline_id\": \"${ConversionPipeline}\" }"
                 - ConversionPipeline:
                     Ref: ConversionToOrc
             - Key: "role"
