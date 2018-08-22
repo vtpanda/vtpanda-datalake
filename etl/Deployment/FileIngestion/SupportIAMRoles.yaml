@@ -1,5 +1,27 @@
 Description: Creating permmissions for the support Lambda functions
 Resources:
+  DataPipelinePolicyPassDataPipelineDeveloperRole:
+    Type: "AWS::IAM::Policy"
+    DependsOn:
+      - DataPipelineDeveloper
+      - DataPipelineDeveloperResource
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Resource:
+              - Fn::GetAtt:
+                - DataPipelineDeveloper
+                - Arn
+              - Fn::GetAtt:
+                - DataPipelineDeveloperResource
+                - Arn
+            Action:
+            - "iam:PassRole"
+      PolicyName: "DataPipelinePolicyPassDataPipelineDeveloperRole"
+      Roles:
+        - Ref: LambdaCloudWatchLogsAndDataPipeline
   LambdaCloudWatchLogsAndDataPipeline:
     Type: "AWS::IAM::Role"
     Properties:
@@ -31,6 +53,23 @@ Resources:
               - "lambda.amazonaws.com"
             Action:
             - "sts:AssumeRole"
+  DataPipelineDeveloper:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: DataPipelineDeveloper
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSDataPipelineRole
+      - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "elasticmapreduce.amazonaws.com"
+              - "datapipeline.amazonaws.com"
+            Action:
+            - "sts:AssumeRole"
   DataPipelineDeveloperResource:
     Type: "AWS::IAM::Role"
     Properties:
@@ -38,6 +77,7 @@ Resources:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforDataPipelineRole
       - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -70,6 +110,14 @@ Outputs:
       Fn::GetAtt:
       - LambdaCloudWatchLogs
       - Arn
+  DataPipelineDeveloperARN:
+    Description: IAM Role for Data Pipeline Runner
+    Export:
+      Name: DataPipelineDeveloperARN
+    Value:
+      Fn::GetAtt:
+      - DataPipelineDeveloper
+      - Arn
   DataPipelineDeveloperResourceARN:
     Description: IAM Role for Data Pipeline Resource Runner
     Export:
@@ -90,6 +138,12 @@ Outputs:
       Name: LambdaCloudWatchLogs
     Value:
       Ref: LambdaCloudWatchLogs
+  DataPipelineDeveloper:
+    Description: IAM Role for Data Pipeline Runner
+    Export:
+      Name: DataPipelineDeveloper
+    Value:
+      Ref: DataPipelineDeveloper
   DataPipelineDeveloperResource:
     Description: IAM Role for Data Pipeline Resource Runner
     Export:
