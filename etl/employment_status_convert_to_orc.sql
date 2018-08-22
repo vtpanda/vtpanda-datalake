@@ -1,7 +1,4 @@
 
-set hive.exec.dynamic.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;
-set hive.mapred.mode=nonstrict;
 
 insert overwrite table census_employment_status_2010
 select
