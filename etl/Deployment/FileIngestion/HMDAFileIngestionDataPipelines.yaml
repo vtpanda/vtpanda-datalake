@@ -1,4 +1,4 @@
-Description: Common support SNS Topics for AWS development
+Description: Data Pipelines for Ingestion of HMDA data and conversion to Orc
 Parameters:
   ScriptFolder:
     Description: Folder that contains the python and sql scripts referenced by this data pipeline.
@@ -91,7 +91,7 @@ Resources:
               StringValue: "CASCADE"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "resourceRole"
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloperResource
@@ -162,7 +162,7 @@ Resources:
               StringValue: "Orc Conversion Succeeded"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Orc Conversion Succeeded"
             - Key: "topicArn"
@@ -177,7 +177,7 @@ Resources:
               StringValue: "Orc Conversion Failed; Please check the logs"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Orc Conversion Failed"
             - Key: "topicArn"
@@ -192,7 +192,7 @@ Resources:
               StringValue: "{ 'message': 'The #{myFeedName} Orc Conversion process was successful.', 'priority': 'info' }"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Orc Conversion Succeeded"
             - Key: "topicArn"
@@ -207,7 +207,7 @@ Resources:
               StringValue: "{ 'message': 'The #{myFeedName} Orc Conversion process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Failure in Orc Conversion"
             - Key: "topicArn"
@@ -311,7 +311,7 @@ Resources:
               StringValue: "CASCADE"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "resourceRole"
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloperResource
@@ -375,7 +375,7 @@ Resources:
                     Ref: ConversionToOrc
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "Kick off Orc Conversion"
             - Key: "topicArn"
@@ -390,7 +390,7 @@ Resources:
               StringValue: "Data Upload Succeeded"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Data Upload Succeeded"
             - Key: "topicArn"
@@ -405,7 +405,7 @@ Resources:
               StringValue: "Data Ingestion Failed; Please check the logs"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Data Ingestion Failed"
             - Key: "topicArn"
@@ -420,7 +420,7 @@ Resources:
               StringValue: "{ 'message': 'The #{myFeedName} upload ingestion process was successful.', 'priority': 'info' }"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Data Upload Succeeded"
             - Key: "topicArn"
@@ -435,7 +435,7 @@ Resources:
               StringValue: "{ 'message': 'The #{myFeedName} upload ingestion process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
             - Key: "role"
               StringValue:
-                Fn::ImportValue: DataPipelineDeveloper
+                Fn::ImportValue: DataPipelineDefaultRole
             - Key: "subject"
               StringValue: "#{myFeedName}: Failure in Data Download and Ingestion"
             - Key: "topicArn"
