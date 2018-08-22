@@ -19,8 +19,206 @@ Parameters:
     Description: KeyPair to use to access the EC2 instance
     Type: String
 Resources:
+  ConversionToOrc:
+    Type: "AWS::DataPipeline::Pipeline"
+    Properties:
+      Name:
+        Fn::Sub:
+        - "ConversionToOrc_${FeedName}"
+        - FeedName:
+            Ref: FeedName
+      Description:
+        Fn::Sub:
+        - "Pipeline to convert the ${FeedName} feed to Orc"
+        - FeedName:
+            Ref: FeedName
+      Activate: false
+      ParameterObjects:
+        - Id: "myDataPipeLineLogFolder"
+          Attributes:
+            - Key: "description"
+              StringValue: "S3 folder that the Data Pipeline logs to"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+        - Id: "myInputScriptsFolder"
+          Attributes:
+            - Key: "description"
+              StringValue: "S3 folder that the Data Pipeline logs to"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "s3://aws-logs-019672110497-us-east-1/datapipeline"
+        - Id: "myEC2KeyPair"
+          Attributes:
+            - Key: "description"
+              StringValue: "KeyPair to use to be able to access the EC2 instance"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "EC2First"
+        - Id: "myFeedName"
+          Attributes:
+            - Key: "description"
+              StringValue: "Name of the feed"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "hmda"
+      ParameterValues:
+        - Id: "myDataPipeLineLogFolder"
+          StringValue:
+            Ref: LogFolder
+        - Id: "myInputScriptsFolder"
+          StringValue:
+            Ref: ScriptFolder
+        - Id: "myEC2KeyPair"
+          StringValue:
+            Ref: EC2KeyPair
+        - Id: "myFeedName"
+          StringValue:
+            Ref: FeedName
+      PipelineObjects:
+        - Id: "Default"
+          Name: "Default"
+          Fields:
+            - Key: "type"
+              StringValue: "Default"
+            - Key: "scheduleType"
+              StringValue: "ONDEMAND"
+            - Key: "failureAndRerunMode"
+              StringValue: "CASCADE"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "resourceRole"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloperResource
+            - Key: "pipelineLogUri"
+              StringValue: "#{myDataPipeLineLogFolder}"
+        - Id: "HiveProperty"
+          Name: "HiveProperty"
+          Fields:
+            - Key: "type"
+              StringValue: "Property"
+            - Key: "key"
+              StringValue: "hive.metastore.client.factory.class"
+            - Key: "value"
+              StringValue: "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
+        - Id: "EMRConfigForHive"
+          Name: "EMRConfigForHive"
+          Fields:
+            - Key: "type"
+              StringValue: "EmrConfiguration"
+            - Key: "classification"
+              StringValue: "hive-site"
+            - Key: "property"
+              RefValue: HiveProperty
+        - Id: "EMRClusterForHive"
+          Name: "EMRClusterForHive"
+          Fields:
+            - Key: "type"
+              StringValue: "EmrCluster"
+            - Key: "configuration"
+              RefValue: EMRConfigForHive
+            - Key: "keyPair"
+              StringValue: "#{myEC2KeyPair}"
+            - Key: "coreInstanceCount"
+              StringValue: "1"
+            - Key: "releaseLabel"
+              StringValue: "emr-5.16.0"
+            - Key: "terminateAfter"
+              StringValue: "1 HOUR"
+
+        - Id: HiveOrcConversionActivity
+          Name: "HiveOrcConversionActivity"
+          Fields:
+            - Key: "type"
+              StringValue: "HiveActivity"
+            - Key: "scriptUri"
+              StringValue: "#{myInputScriptsFolder}/#{myFeedName}_convert_to_orc.sql"
+            - Key: "stage"
+              StringValue: "false"
+            - Key: "maximumRetries"
+              StringValue: "0"
+            - Key: "runsOn"
+              RefValue: EMRClusterForHive
+            - Key: "onFail"
+              RefValue: FailureEmail
+            - Key: "onFail"
+              RefValue: FailureLogging
+            - Key: "onSuccess"
+              RefValue: SuccessEmail
+            - Key: "onSuccess"
+              RefValue: SuccessfulLogging
+
+        - Id: SuccessEmail
+          Name: "SuccessEmail"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "Orc Conversion Succeeded"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "#{myFeedName}: Orc Conversion Succeeded"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: ETLAdminEmailSubscriptionTopic
+        - Id: FailureEmail
+          Name: "FailureEmail"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "Orc Conversion Failed; Please check the logs"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "#{myFeedName}: Orc Conversion Failed"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: ETLAdminEmailSubscriptionTopic
+        - Id: SuccessfulLogging
+          Name: "SuccessfulLogging"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "{ 'message': 'The #{myFeedName} Orc Conversion process was successful.', 'priority': 'info' }"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "#{myFeedName}: Orc Conversion Succeeded"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: CloudWatchLogTopic
+        - Id: FailureLogging
+          Name: "FailureLogging"
+          Fields:
+            - Key: "type"
+              StringValue: "SnsAlarm"
+            - Key: "message"
+              StringValue: "{ 'message': 'The #{myFeedName} Orc Conversion process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
+            - Key: "role"
+              StringValue:
+                Fn::ImportValue: DataPipelineDeveloper
+            - Key: "subject"
+              StringValue: "#{myFeedName}: Failure in Orc Conversion"
+            - Key: "topicArn"
+              StringValue:
+                Fn::ImportValue: CloudWatchLogTopic
+
+
   FileIngestionUploadToS3:
     Type: "AWS::DataPipeline::Pipeline"
+    DependsOn:
+    - ConversionToOrc
     Properties:
       Name:
         Fn::Sub:
@@ -74,6 +272,14 @@ Resources:
               StringValue: "String"
             - Key: "default"
               StringValue: "EC2First"
+        - Id: "myFeedName"
+          Attributes:
+            - Key: "description"
+              StringValue: "Name of the feed"
+            - Key: "type"
+              StringValue: "String"
+            - Key: "default"
+              StringValue: "hmda"
       ParameterValues:
         - Id: "myDataPipeLineLogFolder"
           StringValue:
@@ -90,6 +296,9 @@ Resources:
         - Id: "myEC2KeyPair"
           StringValue:
             Ref: EC2KeyPair
+        - Id: "myFeedName"
+          StringValue:
+            Ref: FeedName
       PipelineObjects:
         - Id: "Default"
           Name: "Default"
@@ -129,14 +338,14 @@ Resources:
             - Key: "terminateAfter"
               StringValue: "4 HOURS"
         - Id: ShellActivity
-          Name: "ShellScript"
+          Name: "ShellActivity"
           Fields:
             - Key: "type"
               StringValue: "ShellCommandActivity"
             - Key: "input"
               RefValue: InputScriptsFolderDataNode
             - Key: "scriptUri"
-              StringValue: "#{myInputScriptsFolder}/hmda_ingestion.sh"
+              StringValue: "#{myInputScriptsFolder}/#{myFeedName}_ingestion.sh"
             - Key: "stage"
               StringValue: "true"
             - Key: "maximumRetries"
@@ -159,7 +368,11 @@ Resources:
             - Key: "type"
               StringValue: "SnsAlarm"
             - Key: "message"
-              StringValue: "{ 'pipeline_id': 'df-0230793SAN246TOW009' }"
+              StringValue:
+                Fn::Sub:
+                - "{ 'pipeline_id': '${ConversionPipeline}' }"
+                - ConversionPipeline:
+                    Ref: ConversionToOrc
             - Key: "role"
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloper
@@ -179,7 +392,7 @@ Resources:
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloper
             - Key: "subject"
-              StringValue: "Data Upload Succeeded"
+              StringValue: "#{myFeedName}: Data Upload Succeeded"
             - Key: "topicArn"
               StringValue:
                 Fn::ImportValue: ETLAdminEmailSubscriptionTopic
@@ -194,7 +407,7 @@ Resources:
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloper
             - Key: "subject"
-              StringValue: "Data Ingestion Failed"
+              StringValue: "#{myFeedName}: Data Ingestion Failed"
             - Key: "topicArn"
               StringValue:
                 Fn::ImportValue: ETLAdminEmailSubscriptionTopic
@@ -204,12 +417,12 @@ Resources:
             - Key: "type"
               StringValue: "SnsAlarm"
             - Key: "message"
-              StringValue: "{ 'message': 'The HMDA upload ingestion process was successful.', 'priority': 'info' }"
+              StringValue: "{ 'message': 'The #{myFeedName} upload ingestion process was successful.', 'priority': 'info' }"
             - Key: "role"
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloper
             - Key: "subject"
-              StringValue: "Data Upload Succeeded"
+              StringValue: "#{myFeedName}: Data Upload Succeeded"
             - Key: "topicArn"
               StringValue:
                 Fn::ImportValue: CloudWatchLogTopic
@@ -219,12 +432,12 @@ Resources:
             - Key: "type"
               StringValue: "SnsAlarm"
             - Key: "message"
-              StringValue: "{ 'message': 'The Data Upload Process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
+              StringValue: "{ 'message': 'The #{myFeedName} upload ingestion process had an error.  Please check the Data Pipeline logs.', 'priority': 'error' }"
             - Key: "role"
               StringValue:
                 Fn::ImportValue: DataPipelineDeveloper
             - Key: "subject"
-              StringValue: "Failure in Data Download and Ingestion"
+              StringValue: "#{myFeedName}: Failure in Data Download and Ingestion"
             - Key: "topicArn"
               StringValue:
                 Fn::ImportValue: CloudWatchLogTopic
