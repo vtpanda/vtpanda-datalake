@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "ScriptFolder",
-    "ParameterValue": "s3://vtpanda-data-pipeline/scripts"
+    "ParameterValue": "s3://vtpanda-data-lake/feeds/hmda/hmda_lar/scripts"
   },
   {
     "ParameterKey": "FeedName",
