@@ -33,8 +33,8 @@ then
 fi
 
 echo "Deploying HMDADataIngestionDataPipelines"
-aws cloudformation create-stack --stack-name HMDADataIngestionDataPipelines --template-url https://s3.amazonaws.com/$bucket/feeds/hmda/hmda_lar/scripts/deployment/HMDAFileIngestionDataPipelines.yaml --parameters file://HMDAFileIngestionDataPipelines_CreateStack_Parameters.json --profile $profile
-aws cloudformation wait stack-create-complete --stack-name HMDADataIngestionDataPipelines --profile $profile
+aws cloudformation create-stack --stack-name HMDALARDataIngestionDataPipelines --template-url https://s3.amazonaws.com/$bucket/feeds/hmda/hmda_lar/scripts/deployment/hmda_lar_create_stack.yaml --parameters file://hmda_lar_create_stack_parameters.json --profile $profile
+aws cloudformation wait stack-create-complete --stack-name HMDALARDataIngestionDataPipelines --profile $profile
 if test "$?" != "0"
 then
     echo "SupportSNSTopics Did Not Return in a Timely Manner"

@@ -1,2 +1,0 @@
-#!/bin/bash
-aws cloudformation create-stack --stack-name HMDADataIngestionDataPipelines --template-body file:///Users/mattroberts/Documents/GitHub/vtpanda-datalake/etl/Deployment/FileIngestion/HMDAFileIngestionDataPipelines.yaml --parameters file:///Users/mattroberts/Documents/GitHub/vtpanda-datalake/etl/Deployment/FileIngestion/HMDAFileIngestionDataPipelines_CreateStack_Parameters.json --profile myaws
