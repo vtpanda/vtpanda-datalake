@@ -4,6 +4,7 @@ profile=myaws
 echo "Uploading files to S3"
 aws s3 cp fdic_convert_net_charge_offs_1_4_family_residential_to_orc_glue.py s3://vtpanda-deployment/GlueJobs/fdic_convert_net_charge_offs_1_4_family_residential_to_orc_glue.py --profile $profile
 aws s3 cp fdic_convert_net_charge_offs_1_4_family_residential_glue.yaml s3://vtpanda-deployment/GlueJobs/fdic_convert_net_charge_offs_1_4_family_residential_to_orc_glue.yaml --profile $profile
+aws s3 cp deploy.sh s3://vtpanda-deployment/GlueJobs/deploy.sh --profile $profile
 
 echo "Deploying GlueJobs"
 aws cloudformation create-stack --stack-name GlueJobs --template-url https://s3.amazonaws.com/vtpanda-deployment/GlueJobs/fdic_convert_net_charge_offs_1_4_family_residential_to_orc_glue.yaml --profile $profile
