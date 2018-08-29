@@ -1,0 +1,78 @@
+Description: Common support functions for AWS development
+
+Resources:
+  MSCKRepairGlueTable:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Repair a Glue Table to create its partitions
+      FunctionName: MSCKRepairGlueTable
+      Handler: "index.lambda_handler"
+      Runtime: python3.6
+      Timeout: "10"
+      Role: "arn:aws:iam::087272432051:role/service-role/LambdaAthenaRunCommand"
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def lambda_handler(event, context):
+              output_location = event.get("output_location", 'not provided')
+              database_name = event.get("database_name", 'not provided')
+              table_name = event.get("table_name", 'not provided')
+
+              client = boto3.client('athena')
+              sql = ""
+
+              try:
+                  config = {
+                      'OutputLocation': output_location
+                  }
+
+                  # Query Execution Parameters
+                  sql = 'MSCK REPAIR TABLE ' + database_name + '.' + table_name
+                  athenacontext = {'Database': database_name }
+
+                  client.start_query_execution(QueryString = sql,
+                                               QueryExecutionContext = athenacontext,
+                                               ResultConfiguration = config)
+              except:
+                  logger.error('MSCK failed: sql = ' + sql + ', database_name = ' + database_name + ', table_name = ' + table_name + ', output_location = ' + output_location)
+                  raise
+              logger.info('MSCK Successful: sql = ' + sql + ', database_name = ' + database_name + ', table_name = ' + table_name + ', output_location = ' + output_location)
+
+
+  MSCKRepairGlueTableInvokePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+    - MSCKRepairGlueTable
+    - MSCKRepairGlueTableTopic
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com
+      SourceArn:
+        Ref: MSCKRepairGlueTableTopic
+      FunctionName:
+        Fn::GetAtt:
+        - MSCKRepairGlueTable
+        - Arn
+  MSCKRepairGlueTableTopic:
+    Type: AWS::SNS::Topic
+    DependsOn:
+    - MSCKRepairGlueTable
+    Properties:
+      TopicName: MSCKRepairGlueTableTopic
+      Subscription:
+      - Protocol: "lambda"
+        Endpoint:
+          Fn::GetAtt:
+          - MSCKRepairGlueTable
+          - Arn
+Outputs:
+  MSCKRepairGlueTableTopic:
+    Description: Activate a Data Pipeline
+    Export:
+      Name: MSCKRepairGlueTableTopic
+    Value:
+      Ref: MSCKRepairGlueTableTopic
