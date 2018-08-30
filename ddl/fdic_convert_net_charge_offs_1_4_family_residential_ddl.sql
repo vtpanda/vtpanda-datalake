@@ -46,7 +46,7 @@ report_date string)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/fdic/net_charge_offs_1_4_family_residential/raw/csv/'
+location 's3://vtpanda-data-lake/feeds/fdic/net_charge_offs_1_4_family_residential/raw/csv/'
 tblproperties ("skip.header.line.count"="1");
 
 
@@ -96,5 +96,5 @@ ntreloc String)
 PARTITIONED BY (
 report_date string)
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/fdic/net_charge_offs_1_4_family_residential/clean/orc'
+LOCATION 's3://vtpanda-data-lake/feeds/fdic/net_charge_offs_1_4_family_residential/clean/orc'
 tblproperties ("orc.compress"="ZLIB");
