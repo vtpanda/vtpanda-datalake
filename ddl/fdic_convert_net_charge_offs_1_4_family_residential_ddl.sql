@@ -1,4 +1,4 @@
-CREATE external table fdic_net_charge_offs_1_4_family_residential_raw (
+CREATE external table if not exists fdic.fdic_net_charge_offs_1_4_family_residential_raw (
 cert String,
 docket String,
 fed_rssd String,
@@ -50,7 +50,7 @@ location 's3://vtpanda-data-lake/feeds/fdic/net_charge_offs_1_4_family_residenti
 tblproperties ("skip.header.line.count"="1");
 
 
-CREATE external table fdic_net_charge_offs_1_4_family_residential (
+CREATE external table if not exists fdic.fdic_net_charge_offs_1_4_family_residential (
 cert String,
 docket String,
 fed_rssd String,

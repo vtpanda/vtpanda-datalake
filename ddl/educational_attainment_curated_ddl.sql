@@ -1,4 +1,4 @@
-CREATE external table census_educational_attainment (
+CREATE external table if not exists census.census_educational_attainment (
   Id String,
   Id2 String,
   Geography String,
@@ -234,5 +234,5 @@ CREATE external table census_educational_attainment (
 PARTITIONED BY (
   as_of_year string)
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/educational_attainment/curated/orc'
+LOCATION 's3://vtpanda-data-lake/feeds/census/educational_attainment/curated/orc'
 tblproperties ("orc.compress"="ZLIB");

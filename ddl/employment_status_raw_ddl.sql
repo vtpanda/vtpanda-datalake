@@ -1,4 +1,4 @@
-CREATE external table census_employment_status_raw_2010 (
+CREATE external table if not exists census.census_employment_status_raw_2010 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -246,10 +246,10 @@ HC04_MOE_VC45 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2010'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2010'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2011 (
+CREATE external table if not exists census.census_employment_status_raw_2011 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -497,10 +497,10 @@ HC04_MOE_VC45 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2011'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2011'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2012 (
+CREATE external table if not exists census.census_employment_status_raw_2012 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -748,10 +748,10 @@ HC04_MOE_VC45 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2012'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2012'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2013 (
+CREATE external table if not exists census.census_employment_status_raw_2013 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -999,10 +999,10 @@ HC04_MOE_VC44 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2013'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2013'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2014 (
+CREATE external table if not exists census.census_employment_status_raw_2014 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1250,10 +1250,10 @@ HC04_MOE_VC44 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2014'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2014'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2015 (
+CREATE external table if not exists census.census_employment_status_raw_2015 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1541,10 +1541,10 @@ HC04_MOE_VC47 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2015'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2015'
 tblproperties ("skip.header.line.count"="1");
 
-CREATE external table census_employment_status_raw_2016 (
+CREATE external table if not exists census.census_employment_status_raw_2016 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1832,5 +1832,5 @@ HC04_MOE_VC47 String
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",", "quoteChar" = "\"" )
-location 's3://datalake-poc-data/feeds/census/employment_status/raw/csv/2016'
+location 's3://vtpanda-data-lake/feeds/census/employment_status/raw/csv/2016'
 tblproperties ("skip.header.line.count"="1");

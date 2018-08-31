@@ -1,4 +1,4 @@
-insert overwrite table census_educational_attainment_2010
+insert overwrite table census.census_educational_attainment_2010
 select
 GEO_id,
 GEO_id2,
@@ -232,9 +232,9 @@ HC02_MOE_VC52,
 HC03_EST_VC52,
 HC03_MOE_VC52
 from
-census_educational_attainment_raw_2010;
+census.census_educational_attainment_raw_2010;
 
-insert overwrite table census_educational_attainment_2011
+insert overwrite table census.census_educational_attainment_2011
 select
 GEO_id,
 GEO_id2,
@@ -468,9 +468,9 @@ HC02_MOE_VC52,
 HC03_EST_VC52,
 HC03_MOE_VC52
 from
-census_educational_attainment_raw_2011;
+census.census_educational_attainment_raw_2011;
 
-insert overwrite table census_educational_attainment_2012
+insert overwrite table census.census_educational_attainment_2012
 select
 GEO_id,
 GEO_id2,
@@ -704,9 +704,9 @@ HC02_MOE_VC52,
 HC03_EST_VC52,
 HC03_MOE_VC52
 from
-census_educational_attainment_raw_2012;
+census.census_educational_attainment_raw_2012;
 
-insert overwrite table census_educational_attainment_2013
+insert overwrite table census.census_educational_attainment_2013
 select
 GEO_id,
 GEO_id2,
@@ -940,9 +940,9 @@ HC02_MOE_VC50,
 HC03_EST_VC50,
 HC03_MOE_VC50
 from
-census_educational_attainment_raw_2013;
+census.census_educational_attainment_raw_2013;
 
-insert overwrite table census_educational_attainment_2014
+insert overwrite table census.census_educational_attainment_2014
 select
 GEO_id,
 GEO_id2,
@@ -1176,9 +1176,9 @@ HC02_MOE_VC50,
 HC03_EST_VC50,
 HC03_MOE_VC50
 from
-census_educational_attainment_raw_2014;
+census.census_educational_attainment_raw_2014;
 
-insert overwrite table census_educational_attainment_2015
+insert overwrite table census.census_educational_attainment_2015
 select
 GEO_id,
 GEO_id2,
@@ -1952,9 +1952,9 @@ HC05_MOE_VC85,
 HC06_EST_VC85,
 HC06_MOE_VC85
 from
-census_educational_attainment_raw_2015;
+census.census_educational_attainment_raw_2015;
 
-insert overwrite table census_educational_attainment_2016
+insert overwrite table census.census_educational_attainment_2016
 select
 GEO_id,
 GEO_id2,
@@ -2728,4 +2728,4 @@ HC05_MOE_VC85,
 HC06_EST_VC85,
 HC06_MOE_VC85
 from
-census_educational_attainment_raw_2016;
+census.census_educational_attainment_raw_2016;

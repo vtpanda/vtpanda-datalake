@@ -1,4 +1,4 @@
-CREATE external table census_employment_status_2010 (
+CREATE external table if not exists census.census_employment_status_2010 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -244,10 +244,10 @@ HC04_EST_VC45 String,
 HC04_MOE_VC45 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2010'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2010'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2011 (
+CREATE external table if not exists census.census_employment_status_2011 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -493,10 +493,10 @@ HC04_EST_VC45 String,
 HC04_MOE_VC45 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2011'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2011'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2012 (
+CREATE external table if not exists census.census_employment_status_2012 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -742,10 +742,10 @@ HC04_EST_VC45 String,
 HC04_MOE_VC45 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2012'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2012'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2013 (
+CREATE external table if not exists census.census_employment_status_2013 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -991,10 +991,10 @@ HC04_EST_VC44 String,
 HC04_MOE_VC44 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2013'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2013'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2014 (
+CREATE external table if not exists census.census_employment_status_2014 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1240,10 +1240,10 @@ HC04_EST_VC44 String,
 HC04_MOE_VC44 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2014'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2014'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2015 (
+CREATE external table if not exists census.census_employment_status_2015 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1529,10 +1529,10 @@ HC04_EST_VC47 String,
 HC04_MOE_VC47 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2015'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2015'
 tblproperties ("orc.compress"="ZLIB");
 
-CREATE external table census_employment_status_2016 (
+CREATE external table if not exists census.census_employment_status_2016 (
 GEO_id String,
 GEO_id2 String,
 GEO_display_label String,
@@ -1818,5 +1818,5 @@ HC04_EST_VC47 String,
 HC04_MOE_VC47 String
 )
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/clean/csv/2016'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/clean/orc/2016'
 tblproperties ("orc.compress"="ZLIB");

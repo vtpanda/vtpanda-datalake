@@ -3,7 +3,7 @@ set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.mapred.mode=nonstrict;
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -322,10 +322,10 @@ HC04_MOE_VC45,
 '',
 '2010' as as_of_year
 from
-census_employment_status_raw_2010;
+census.census_employment_status_raw_2010;
 
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -644,9 +644,9 @@ HC04_MOE_VC45,
 '',
 '2011' as as_of_year
 from
-census_employment_status_raw_2011;
+census.census_employment_status_raw_2011;
 
-insert into census_employment_status partition (as_of_year)
+insert into census./orc partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -965,9 +965,9 @@ HC04_MOE_VC45,
 '',
 '2012' as as_of_year
 from
-census_employment_status_raw_2012;
+census.census_employment_status_raw_2012;
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status_2013 (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -1286,9 +1286,9 @@ HC04_MOE_VC44,
 '',
 '2013' as as_of_year
 from
-census_employment_status_raw_2013;
+census.census_employment_status_raw_2013;
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -1607,9 +1607,9 @@ HC04_MOE_VC44,
 '',
 '2014' as as_of_year
 from
-census_employment_status_raw_2014;
+census.census_employment_status_raw_2014;
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -1928,9 +1928,9 @@ HC04_EST_VC37,
 HC04_MOE_VC37,
 '2015' as as_of_year
 from
-census_employment_status_raw_2015;
+census.census_employment_status_raw_2015;
 
-insert into census_employment_status partition (as_of_year)
+insert into census.census_employment_status partition (as_of_year)
 select
 GEO_id,
 GEO_id2,
@@ -2249,6 +2249,6 @@ HC04_EST_VC37,
 HC04_MOE_VC37,
 '2016' as as_of_year
 from
-census_employment_status_raw_2016;
+census.census_employment_status_raw_2016;
 
-msck repair table census_employment_status;
+msck repair table census.census_employment_status;

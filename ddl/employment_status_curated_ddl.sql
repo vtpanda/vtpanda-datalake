@@ -1,4 +1,4 @@
-CREATE external table census_employment_status (
+CREATE external table if not exists census.census_employment_status (
   Id String,
   Id2 String,
   Geography String,
@@ -318,5 +318,5 @@ CREATE external table census_employment_status (
 PARTITIONED BY (
   as_of_year string)
 STORED AS ORC
-LOCATION 's3://datalake-poc-data/feeds/census/employment_status/curated/orc'
+LOCATION 's3://vtpanda-data-lake/feeds/census/employment_status/curated/orc'
 tblproperties ("orc.compress"="ZLIB");

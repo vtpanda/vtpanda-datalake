@@ -2,10 +2,10 @@ set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.mapred.mode=nonstrict;
 
-msck repair table fdic_net_charge_offs_1_4_family_residential_raw;
+msck repair table fdic.fdic_net_charge_offs_1_4_family_residential_raw;
 
 
-insert into fdic_net_charge_offs_1_4_family_residential partition (report_date)
+insert into fdic.fdic_net_charge_offs_1_4_family_residential partition (report_date)
 select
 cert,
 docket,
@@ -50,6 +50,6 @@ NTRERSFM,
 NTRERSF2,
 ntreloc,
 report_date
-from fdic_net_charge_offs_1_4_family_residential_raw;
+from fdic.fdic_net_charge_offs_1_4_family_residential_raw;
 
-msck repair table fdic_net_charge_offs_1_4_family_residential;
+msck repair table fdic.fdic_net_charge_offs_1_4_family_residential;
