@@ -7,7 +7,7 @@ Resources:
       Role:
         Fn::Sub: "Glue_S3_vtpanda-data-lake_List_Read_Write"
       MaxRetries: 1
-      Description: converts an arbitrary Glue CSV table into Orc
+      Description: converts FDIC net charge offs Glue CSV table into Orc
       Command:
         # DO NOT CHANGE NAME. CloudFormation docs are wrong. Use Glue API docs:
         # http://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-JobCommand

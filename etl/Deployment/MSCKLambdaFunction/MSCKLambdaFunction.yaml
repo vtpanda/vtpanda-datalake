@@ -71,7 +71,7 @@ Resources:
           - Arn
 Outputs:
   MSCKRepairGlueTableTopic:
-    Description: Activate a Data Pipeline
+    Description: MSCK Repair a Glue Table to create its partitions
     Export:
       Name: MSCKRepairGlueTableTopic
     Value:
