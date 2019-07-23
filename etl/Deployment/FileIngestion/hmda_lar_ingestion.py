@@ -68,7 +68,7 @@ logger = logging.getLogger('HMDA_load_process-'+str((today-datetime.datetime(197
 logger.addHandler(watchtower.CloudWatchLogHandler(log_group=logGroup))
 
 msg = 'Parameters: '+ commandargs
-print(msg)
+
 logger.info(msg)
 
 #define functions
@@ -106,7 +106,7 @@ def extract_hmda():
         for varYearInt in hmdaYearlist:
             varYear = str(varYearInt)
             msg = 'Downloading HMDA data for '+ varYear
-            print(msg)
+
             logger.info(msg)
             url = urlBase+varYear+urlEnd
 
@@ -118,7 +118,7 @@ def extract_hmda():
 
             make_sure_path_exists(path)
             msg = 'Making directory '+path
-            print(msg)
+
             logger.info(msg)
             try:
                 #get the HMDA data for the varYear variable
@@ -126,7 +126,7 @@ def extract_hmda():
                 file = open(fileName, 'wb')
 
                 msg = 'Downloading data '+fileName
-                print(msg)
+
                 logger.info(msg)
 
                 if req.status_code == 200:
@@ -136,7 +136,6 @@ def extract_hmda():
                         file.write(chunk)
             except:
                 msg = 'Error when downloding file '+fileName
-                print(msg)
                 logger.exception(msg)
                 raise
             else:
@@ -144,17 +143,16 @@ def extract_hmda():
 
             fileCount = file_len(fileName)
             msg = 'Completed download of file ' + fileName + ' with '+  str(fileCount) + ' records '
-            print(msg)
+
             logger.info(msg)
 
             msg = 'Synch to S3 bucket'
-            print(msg)
+
             logger.info(msg)
 
 
             #upload file to s3
             msg = 'Upload ' + str(uploadfilename) + ' to S3'
-            print(msg)
             logger.info(msg)
 
             try:
@@ -164,42 +162,21 @@ def extract_hmda():
                 s3.meta.client.upload_file(fileName, targetBucket, uploadfilename, Config=config)
 
                 msg = 'Upload file finished'
-                print(msg)
                 logger.info(msg)
             except:
                 msg = 'Error when uploading file'
-                print(msg)
                 logger.exception(msg)
                 raise
-
-        # of the of year partition loop
-        # actually, we probably don't need this because the ec2 instance is epemeral
-        # i'm commenting this out
-        msg = 'Deleting EC2 staging data'
-        print(msg)
-        logger.info(msg)
-        delReturn_code = subprocess.call("rm -r "+pathBase, shell=True)
-        if delReturn_code == 0:
-            msg = 'Delete of EC2 files successful'
-            print(msg)
-            logger.info(msg)
-        else:
-            msg = 'Delete of EC2 files failed'
-            print(msg)
-            logger.info(msg)
-
 
 
     except:
         msg = 'Upload process failed'
-        print(msg)
         logger.exception(msg)
         raise
     else:
         #end clock, calc time and print
         elapsed = timeit.default_timer() - start_time
         msg = 'Upload process successful: ' + str(elapsed) + ' seconds processed - elapsed time'
-        print(msg)
         logger.info(msg)
 
 if __name__ == "__main__":
