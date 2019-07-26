@@ -7,9 +7,9 @@ Resources:
       Description: Repair a Glue Table to create its partitions
       FunctionName: MSCKRepairGlueTable
       Handler: "index.lambda_handler"
-      Runtime: python3.6
+      Runtime: python3.7
       Timeout: "10"
-      Role: "arn:aws:iam::087272432051:role/service-role/LambdaAthenaRunCommand"
+      Role: "arn:aws:iam::087272432051:role/LambdaAthenaDataLake"
       Code:
         ZipFile: |
           import boto3
