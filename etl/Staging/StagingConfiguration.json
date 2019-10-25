@@ -1,0 +1,10 @@
+{
+"StagingConfiguration": [
+    {
+      "Destination": "curated/DimDate/raw/csv/",
+      "Partition": "false",
+      "SourceFilePath": "stage/DimDate/",
+      "SourceFilePattern": "DimDate.csv"
+    }
+  ]
+}
