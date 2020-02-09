@@ -18,7 +18,7 @@ def lambda_handler(event, context):
     key = event['Records'][0]['s3']['object']['key']
 
     try:
-        #response = s3.get_object(Buc   ket=bucket, Key=key)
+
         logger.info('Object {} from Bucket {}. Start processing.'.format(key, bucket))
         copy_source = {
             'Bucket': bucket,
