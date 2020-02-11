@@ -8,7 +8,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 s3 = boto3.client('s3')
+sqs = boto3.client('sqs')
 targetbucket= 'vtpanda-data-lake'
+
 
 def lambda_handler(event, context):
     #print("Received event: " + json.dumps(event, indent=2))
@@ -31,9 +33,10 @@ def lambda_handler(event, context):
         s3.copy_object(CopySource=copy_source, Bucket=targetbucket, Key=keytarget)
         s3.delete_object(Bucket=bucket, Key=key)
         logger.info('Object {} from Bucket {} successfully processed to {} Object in {} Bucket. End processing.'.format(key, bucket, keytarget, targetbucket))
+        logger.info('{ "Object": "{}", "Bucket": "{}" }'.format(keytarget, targetbucket))
+        #sqs.send_message(QueueUrl='NewFileStaged', MessageBody='{ "Object": "{}", "Bucket": "{}" }'.format(keytarget, targetbucket))
         return 'Done'
     except Exception as e:
         logger.error(e)
         logger.error('Error getting object {} from bucket {}.'.format(key, bucket))
         raise e
- 
